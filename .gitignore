@@ -1,0 +1,4 @@
+*-stamp
+build
+debian/python-pyinput
+*.pyc
