@@ -4,3 +4,5 @@ debian/python-pyinput
 *.pyc
 dist
 MANIFEST
+pyinput/uinput.py
+pyinput/uinput_wrap.c
