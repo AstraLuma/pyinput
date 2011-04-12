@@ -7,6 +7,7 @@ import os, pickle, re
 NAME_EMAIL = re.compile(r'^\s*(?P<name>.*)\s*<(?P<email>.*)\s$')
 VERSIONLINE = re.compile(r'\(([0-9.]+)\)')
 
+# This needs fixing up
 def parse_control_file(f):
 	name=value=None
 	for line in f:
@@ -45,7 +46,7 @@ with open('debian/control') as control:
 		name = name.lower()
 		if name in DEBIAN_CONTROL_MAPPING:
 			key = DEBIAN_CONTROL_MAPPING[name]
-			debian_fields[key] = value.strip()
+			debian_fields[key] = value
 
 # Fix-up some fields
 if 'description' in debian_fields:
@@ -62,6 +63,9 @@ if '__maintainer_info' in debian_fields:
 	if m:
 		md = m.groupdict()
 		debian_fields['maintainer'], debian_fields['maintainer_email'] = md['name'], md['email']
+
+for k,v in debian_fields.items():
+    debian_fields[k] = v.strip()
 
 from pprint import pprint
 pprint(debian_fields)
