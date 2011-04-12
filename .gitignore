@@ -2,3 +2,5 @@
 build
 debian/python-pyinput
 *.pyc
+dist
+MANIFEST

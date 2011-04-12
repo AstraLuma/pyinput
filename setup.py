@@ -42,9 +42,10 @@ with open('debian/changelog') as changelog:
 
 with open('debian/control') as control:
 	for name,value in parse_control_file(control):
+		name = name.lower()
 		if name in DEBIAN_CONTROL_MAPPING:
 			key = DEBIAN_CONTROL_MAPPING[name]
-			debian_fields[key] = value
+			debian_fields[key] = value.strip()
 
 # Fix-up some fields
 if 'description' in debian_fields:
@@ -61,6 +62,9 @@ if '__maintainer_info' in debian_fields:
 	if m:
 		md = m.groupdict()
 		debian_fields['maintainer'], debian_fields['maintainer_email'] = md['name'], md['email']
+
+from pprint import pprint
+pprint(debian_fields)
 
 swigops = {
 	'swig_opts': ['-I/usr/include', '-I/usr/include/python', '-modern', '-modernargs', '-keyword', '-Wall', '-copyctor'],
