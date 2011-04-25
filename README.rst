@@ -1,4 +1,4 @@
-PyInput is an API that abstracts away some of the low-level details of the linux
+PyInput is an API that abstracts away some of the low-level details of the Linux
 input subsystem. It allows read/write access to the devices ``/dev/input/event*`` 
 and the uninput device through object streams.
 
@@ -44,7 +44,7 @@ for full information.
 
 ``FindUinput(*others)``
   Attempts to find the uinput device by checking a pre-defined list of options. 
-  You can pass in more options in others.
+  You can pass in more options in ``others``.
 
 ``EvdevStream``
   The object stream for reading from ``/dev/input/event*``. It defines both 
@@ -52,6 +52,7 @@ for full information.
   the device.
   
   The stream interface is:
+  
   * ``write(obj)``
   * ``read(type)``
   * ``ioctl(op, ...)``
@@ -61,6 +62,7 @@ for full information.
   * The context manager interface
   
   These are the convenience methods. Most of them use ioctl() for their data.
+  
   * ``dev_id()`` -- Returns the ``input_id`` structure for the device
   * ``dev_version()`` -- Returns the device version as an integer
   * ``dev_name()`` -- Returns the device name as a string
@@ -68,9 +70,8 @@ for full information.
   * ``dev_ranges()`` -- Returns the ranges of the absolute axis, as a dict
 
 ``UinputStream``
-  Inherits from EvdevStream, but most of the methods will probably fail. It also 
-  keeps track of the state of the device (namely if it's created) and will wrap 
-  errors.
+  Inherits from ``EvdevStream``, but most of the methods will probably fail. It 
+  also keeps track of the state of the device (namely if it's created).
   
   The context manager interface is implemented somewhat unusually. It is 
   actually meant to be nested. To demonstrate:
@@ -79,9 +80,9 @@ for full information.
     
     with UinputStream() as us: # Open the file, make sure it gets closed
         us.events = ... # Declare the events you're using
-        with us.create(): # Create the device, ie call the UI_DEV_CREATE ioctl, and make sure it gets destroyed
-                          # The return of create() isn't meant to be used outside of this.
-            us.event(t, c, v) # Actually pass an event
+        with us.create(): # Create the device and make sure it gets destroyed.
+                          # The return value of create() isn't meant to be used outside of this.
+            us.event(t, c, v) # Actually feed an event
 
   The first ``with`` is the one for the file, managing the open/close life 
   cycle. The inner ``with`` is for the virtual device, managing the 
@@ -92,4 +93,6 @@ for full information.
   input subsystem easier. You still need to pass a reset event. You still need 
   to declare the events you'll be creating.
   
-  * ``event(type, code, value)`` -- Creates and feeds an ``input_event``. 
+  * ``create()`` -- Creates the device, ie call the ``UI_DEV_CREATE`` ioctl, and returns a context manager to destroy it
+  * ``destroy()`` -- Destroys the device, ie call the ``UI_DEV_DESTROY`` ioctl
+  * ``event(type, code, value)`` -- Creates and feeds an ``input_event``
