@@ -84,7 +84,7 @@ struct timeval
 def _struct_new(theclass):
 	def __new__(cls, *args, **kwargs):
 		"""
-		A generic struct initializer that allows for setting of props during initializartion.
+		A generic struct initializer that allows for setting of props during initialization.
 		"""
 		self = super(theclass, cls).__new__(cls, *args, **kwargs)
 		props = {}
@@ -283,7 +283,7 @@ def FindUinput(*others):
 		if os.path.exists(dev) and stat.S_ISCHR(os.stat(dev).st_mode):
 			return dev
 	else:
-		raise ValueError, "Couldn't find uinput: ran out of devices"
+		return None
 
 class EvdevStream(object):
 	"""
@@ -313,7 +313,8 @@ class EvdevStream(object):
 	
 	def read(self, type):
 		"""e.read(type) -> type
-		Reads data and unpacks it into a struct.
+		Reads data and unpacks it into a struct. The type returned is the type 
+        passed in.
 		"""
 		if hasattr(type, '__len__'):
 			s = type.__len__()
@@ -469,6 +470,10 @@ class UinputStream(EvdevStream):
 
 	__slots__ = '_devcreated','_devcreatable'
 	def __init__(self, fn=None, *pargs):
+        """UinputStream([fn, ...])
+        Takes a file object or filename, like EvdevStream, but if none is given, 
+        UinputStream will call FindUinput() for the file.
+        """
 		if fn is None:
 			fn = open(FindUinput(), 'w')
 		super(UinputStream, self).__init__(fn, *pargs)
@@ -513,7 +518,7 @@ class UinputStream(EvdevStream):
 				self.ioctl(UI_DEV_CREATE)
 			else:
 				raise ValueError, "Already created the device."
-		return self
+		return _uinput_device_manager(self)
 	
 	def destroy(self):
 		"""u.destroy() -> None
@@ -534,12 +539,6 @@ class UinputStream(EvdevStream):
 		ie.value = value
 		self.write(ie)
 	
-	def __enter__(self):
-		return super(UinputStream, self).__enter__()
-			
-	def __exit__(self, exc_type, exc_val, exc_tb):
-		return super(UinputStream, self).__exit__(exc_type, exc_val, exc_tb)
-
 if __name__ == '__main__':
 	uud = uinput_user_dev(name="Saitek Magic Bus", ff_effects_max=0, absmax=[1]*(ABS_MAX+1))
 	print repr(uud)

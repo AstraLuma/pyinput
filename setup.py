@@ -2,7 +2,7 @@
 #-*- coding: utf-8 -*-
 from __future__ import with_statement
 from distutils.core import setup, Extension
-import os, pickle, re
+import os, re
 
 NAME_EMAIL = re.compile(r'^\s*(?P<name>.*)\s*<(?P<email>.*)\s$')
 VERSIONLINE = re.compile(r'\(([0-9.]+)\)')
