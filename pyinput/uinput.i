@@ -327,7 +327,7 @@ class EvdevStream(object):
 		"""e.ioctl(int, ...) -> something
 		Calls fcntl.ioctl() using the backing stream.
 		"""
-		return ioctl(self._fileobj, op, *pargs)
+		return ioctl(self._fileobj.fileno(), op, *pargs)
 	
 	def close(self):
 		"""e.close() -> None
@@ -470,10 +470,10 @@ class UinputStream(EvdevStream):
 
 	__slots__ = '_devcreated','_devcreatable'
 	def __init__(self, fn=None, *pargs):
-        """UinputStream([fn, ...])
-        Takes a file object or filename, like EvdevStream, but if none is given, 
-        UinputStream will call FindUinput() for the file.
-        """
+		"""UinputStream([fn, ...])
+		Takes a file object or filename, like EvdevStream, but if none is given, 
+		UinputStream will call FindUinput() for the file.
+		"""
 		if fn is None:
 			fn = open(FindUinput(), 'w')
 		super(UinputStream, self).__init__(fn, *pargs)
