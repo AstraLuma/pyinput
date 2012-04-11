@@ -81,22 +81,16 @@ struct timeval
 };
 
 %pythoncode %{
-def _struct_new(theclass):
-	def __new__(cls, *args, **kwargs):
+def _struct_new(cls):
+	def make(**kwargs):
 		"""
 		A generic struct initializer that allows for setting of props during initialization.
 		"""
-		self = super(theclass, cls).__new__(cls, *args, **kwargs)
-		props = {}
-		for k,v in kwargs.copy().iteritems():
-			if hasattr(cls, k) and not k.startswith('__') and k not in ('this', 'thisown'):
-				props[k] = v
-				del kwargs[k]
-		self.__init__(*args, **kwargs)
-		for k,v in props.iteritems():
+		self = cls()
+		for k,v in kwargs.iteritems():
 			setattr(self, k, v)
 		return self
-	theclass.__new__ = staticmethod(__new__) # This doesn't work.
+	theclass.make = make
 %}
 %define STRUCT_UTILS(type)
 %extend type {
@@ -285,6 +279,23 @@ def FindUinput(*others):
 	else:
 		return None
 
+def QueryDevices(**params):
+	"""
+	Scans through known devices and yields each one that matches the paramaters 
+	given.
+	
+	Names match the fields of the input_id class.
+	"""
+	for fn in os.listdir('/dev/input'):
+		if not fn.startswith('event'): continue
+		afn = os.path.join('/dev/input', fn)
+		with EvdevStream(afn) as idev:
+			did = idev.dev_id()
+			for k,v in params.items():
+				if getattr(did, k) != v: continue
+			else:
+				yield afn
+
 class EvdevStream(object):
 	"""
 	Acts as an "object stream", meaning that instead of reading bytes, you read 
@@ -375,7 +386,7 @@ class EvdevStream(object):
 		rv = array.array('H', [0]*4)
 		self.ioctl(EVIOCGID, rv, True)
 		bits = rv
-		return input_id(
+		return input_id.make(
 				bustype=bits[ID_BUS],
 				vendor=bits[ID_VENDOR], 
 				product=bits[ID_PRODUCT],
@@ -470,10 +481,10 @@ class UinputStream(EvdevStream):
 
 	__slots__ = '_devcreated','_devcreatable'
 	def __init__(self, fn=None, *pargs):
-        """UinputStream([fn, ...])
-        Takes a file object or filename, like EvdevStream, but if none is given, 
-        UinputStream will call FindUinput() for the file.
-        """
+		"""UinputStream([fn, ...])
+		Takes a file object or filename, like EvdevStream, but if none is given, 
+		UinputStream will call FindUinput() for the file.
+		"""
 		if fn is None:
 			fn = open(FindUinput(), 'w')
 		super(UinputStream, self).__init__(fn, *pargs)
@@ -533,14 +544,15 @@ class UinputStream(EvdevStream):
 			raise ValueError, "Device not yet created. Nothing to destroy."
 	
 	def event(self, type, code, value):
-		ie = input_event()
-		ie.type = type
-		ie.code = code
-		ie.value = value
+		ie = input_event.make(
+			type=type,
+			code=code,
+			value=value,
+			)
 		self.write(ie)
 	
 if __name__ == '__main__':
-	uud = uinput_user_dev(name="Saitek Magic Bus", ff_effects_max=0, absmax=[1]*(ABS_MAX+1))
+	uud = uinput_user_dev.make(name="Saitek Magic Bus", ff_effects_max=0, absmax=[1]*(ABS_MAX+1))
 	print repr(uud)
 	print uud.__dict__
 	print hex(int(uud.this))
