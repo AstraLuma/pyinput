@@ -6,3 +6,4 @@ dist
 MANIFEST
 pyinput/uinput.py
 pyinput/uinput_wrap.c
+debian/files
