@@ -1,0 +1,18 @@
+#!/usr/bin/python
+# -*- tab-width: 4; use-tabs: 1; coding: utf-8 -*-
+# vim:tabstop=4:noexpandtab:
+"""
+Generates the code from the Doxygen XML.
+"""
+from optparse import OptionParser
+parser = OptionParser()
+parser.add_option("-f", "--file", dest="filename",
+                  help="write report to FILE", metavar="FILE")
+parser.add_option("-q", "--quiet",
+                  action="store_false", dest="verbose", default=True,
+                  help="don't print status messages to stdout")
+
+
+if __name__ == '__main__':
+	options, args = parser.parse_args()
+
