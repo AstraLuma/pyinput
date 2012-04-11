@@ -3,7 +3,7 @@ Section: python
 Priority: extra
 Maintainer: James Bliss <james.bliss@astro73.com>
 Build-Depends: debhelper (>= 5), python-support (>= 0.3), python (>= 2.5), python-dev
-Standards-Version: 3.7.2
+Standards-Version: 3.9.1.0
 
 Package: python-pyinput
 Architecture: any

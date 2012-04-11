@@ -1,3 +1,9 @@
+python-pyinput (0.0.2) maverick; urgency=low
+
+  * Updated Python dependencies 
+
+ -- James Bliss <astronouth7303@astro73.com>  Mon, 25 Apr 2011 16:56:05 -0400
+
 python-pyinput (0.0.1) unstable; urgency=low
 
   * Initial Release.
