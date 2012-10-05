@@ -5,11 +5,12 @@ dh_installexamples
 dh_pysupport
 dh_installman
 dh_link
-dh_strip.pkg-create-dbgsym
+dh_strip
 dh_compress
 dh_fixperms
 dh_installdeb
 dh_shlibdeps
 dh_gencontrol
 dh_md5sums
+dh_builddeb
 dh_builddeb
