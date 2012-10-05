@@ -1,3 +1,9 @@
+python-pyinput (0.0.3) precise; urgency=low
+
+  * Python 2.7
+
+ -- James Bliss <astronouth7303@astro73.com>  Thu, 4 Oct 2012 23:39:00 -0400
+
 python-pyinput (0.0.2) maverick; urgency=low
 
   * Updated Python dependencies 
