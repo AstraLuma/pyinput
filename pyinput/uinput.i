@@ -82,7 +82,7 @@ struct timeval
 
 %pythoncode %{
 def _struct_new(cls):
-	def make(**kwargs):
+	def make(cls, **kwargs):
 		"""
 		A generic struct initializer that allows for setting of props during initialization.
 		"""
@@ -90,7 +90,7 @@ def _struct_new(cls):
 		for k,v in kwargs.iteritems():
 			setattr(self, k, v)
 		return self
-	theclass.make = make
+	cls.make = classmethod(make)
 %}
 %define STRUCT_UTILS(type)
 %extend type {
