@@ -7,3 +7,8 @@ MANIFEST
 pyinput/uinput.py
 pyinput/uinput_wrap.c
 debian/files
+debian/python-pyinput.debhelper.log
+debian/python-pyinput.postinst.debhelper
+debian/python-pyinput.prerm.debhelper
+debian/python-pyinput.substvars
+
